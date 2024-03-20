@@ -1,8 +1,8 @@
 const { AbstractPeople } = require("./abstractPeople");
 
-class CommonPeople extends AbstractPeople {
+class WookiePeople extends AbstractPeople {
   constructor(id) {
     super(id);
   }
 }
-module.exports = { CommonPeople };
+module.exports = { WookiePeople };

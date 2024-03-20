@@ -1,40 +1,45 @@
 class AbstractPeople {
-
-    constructor(id) {
-        if (this.constructor == AbstractPeople) {
-            throw new Error("Abstract classes can't be instantiated.");
-        }
+  constructor(person) {
+    if (this.constructor == AbstractPeople) {
+      throw new Error("Abstract classes can't be instantiated.");
     }
+    this.id = person.id;
+    this.name = person.name;
+    this.mass = person.mass;
+    this.height = person.height;
+    this.homeworldName = person.homeworld_name;
+    this.homeworldId = person.homeworld_id;
+  }
 
-    async init(){
-        throw new Error('To be implemented');
-    }
+  async init() {}
 
-    getId() {
-       return this.id;
-    }
+  getId() {
+    return this.id;
+  }
 
-    getName() {
-        return this.name;
-    }
+  getName() {
+    return this.name;
+  }
 
-    getMass() {
-        return this.mass;
-    }
+  getMass() {
+    return this.mass;
+  }
 
-    getHeight() {
-        return this.height;
-    }
+  getHeight() {
+    return this.height;
+  }
 
-    getHomeworldName() {
-        return this.homeworldName;
-    }
+  getHomeworldName() {
+    return this.homeworldName;
+  }
 
-    getHomeworlId() {
-        return this.homeworlId;
-    }
+  getHomeworldId() {
+    return this.homeworldId;
+  }
 
-    getWeightOnPlanet(planetId){
-        throw new Error('To be implemented');
-    }
+  getWeightOnPlanet(planetId) {
+    throw new Error("To be implemented");
+  }
 }
+
+module.exports = { AbstractPeople };
