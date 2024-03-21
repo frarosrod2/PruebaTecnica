@@ -1,4 +1,5 @@
 const { peopleFactory } = require("../../app/People/index");
+const { Planet } = require("../../app/Planet");
 
 const _isWookieeFormat = (req) => {
   if (req.query.format && req.query.format == "wookiee") {
@@ -19,10 +20,14 @@ const applySwapiEndpoints = (server, app) => {
   });
 
   server.get("/hfswapi/getPeople/:id", async (req, res) => {
-    const id = req.params.id;
-    const personData = await app.db.swPeople.findByPk(id);
-    const person = await peopleFactory(personData, null);
+    const personId = req.params.id;
+    const personData = await app.db.swPeople.findByPk(personId);
+    if (!personData) {
+      res.status(404).send("Person not found");
+      return;
+    }
 
+    const person = await peopleFactory(personData, null);
     const formattedPerson = {
       name: person.getName(),
       mass: person.getMass(),
@@ -35,7 +40,22 @@ const applySwapiEndpoints = (server, app) => {
   });
 
   server.get("/hfswapi/getPlanet/:id", async (req, res) => {
-    res.sendStatus(501);
+    const planetId = req.params.id;
+    const planetData = await app.db.swPlanet.findByPk(planetId);
+
+    if (!planetData) {
+      res.status(404).send("Planet not found");
+      return;
+    }
+
+    const planet = await new Planet(planetId);
+    planet.init(planetData);
+    const formattedPlanet = {
+      name: planet.getName(),
+      gravity: planet.getGravity(),
+    };
+
+    res.send(formattedPlanet);
   });
 
   server.get("/hfswapi/getWeightOnPlanetRandom", async (req, res) => {
