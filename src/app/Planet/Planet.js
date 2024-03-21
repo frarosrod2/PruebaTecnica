@@ -1,11 +1,14 @@
+const { getPlanetById } = require("../../server/services/planetService");
+
 class Planet {
   constructor(id) {
     this.id = id;
   }
 
-  async init(planet) {
-    this.name = planet.name;
-    this.gravity = planet.gravity;
+  async init(isUsingApi = false) {
+    const planet = await getPlanetById(this.id, isUsingApi);
+    this.name = planet.name ?? "";
+    this.gravity = planet.gravity ?? null;
   }
 
   getName() {

@@ -1,3 +1,5 @@
+const { getPersonById } = require("../../server/services/peopleService");
+
 class AbstractPeople {
   constructor(id) {
     if (this.constructor == AbstractPeople) {
@@ -6,12 +8,14 @@ class AbstractPeople {
     this.id = id;
   }
 
-  async init(person) {
-    this.name = person.name;
-    this.mass = person.mass;
-    this.height = person.height;
-    this.homeworldName = person.homeworld_name;
-    this.homeworldId = person.homeworld_id;
+  async init(isUsingApi) {
+    console.log(this.id, isUsingApi);
+    const person = await getPersonById(this.id, isUsingApi);
+    this.name = person.name ?? "";
+    this.mass = person.mass ?? null;
+    this.height = person.height ?? null;
+    this.homeworldName = person.homeworld_name ?? "";
+    this.homeworldId = person.homeworld_id ?? "";
   }
 
   getId() {

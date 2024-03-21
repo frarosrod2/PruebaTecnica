@@ -1,5 +1,6 @@
-const { peopleFactory } = require("../../app/People/index");
-const { Planet } = require("../../app/Planet");
+const { peopleFactory } = require("../../app/People");
+const { getWeightOnPlanet } = require("../../app/swapiFunctions");
+const { Planet } = require("../../app/Planet/index");
 
 const _isWookieeFormat = (req) => {
   if (req.query.format && req.query.format == "wookiee") {
@@ -20,46 +21,57 @@ const applySwapiEndpoints = (server, app) => {
   });
 
   server.get("/hfswapi/getPeople/:id", async (req, res) => {
-    const personId = req.params.id;
-    const personData = await app.db.swPeople.findByPk(personId);
-    if (!personData) {
-      res.status(404).send("Person not found");
-      return;
+    try {
+      const personId = req.params.id;
+      const person = await peopleFactory(personId);
+
+      const formattedPerson = {
+        name: person.getName(),
+        mass: person.getMass(),
+        height: person.getHeight(),
+        homeworldName: person.getHomeworldName(),
+        homeworldId: person.getHomeworldId(),
+      };
+
+      res.send(formattedPerson);
+    } catch (error) {
+      return res.status(404).json({ message: error.message });
     }
-
-    const person = await peopleFactory(personData, null);
-    const formattedPerson = {
-      name: person.getName(),
-      mass: person.getMass(),
-      height: person.getHeight(),
-      homeworldName: person.getHomeworldName(),
-      homeworldId: person.getHomeworldId(),
-    };
-
-    res.send(formattedPerson);
   });
 
   server.get("/hfswapi/getPlanet/:id", async (req, res) => {
-    const planetId = req.params.id;
-    const planetData = await app.db.swPlanet.findByPk(planetId);
+    try {
+      const planetId = req.params.id;
+      const planet = new Planet(planetId);
+      await planet.init();
 
-    if (!planetData) {
-      res.status(404).send("Planet not found");
-      return;
+      const formattedPlanet = {
+        name: planet.getName(),
+        gravity: planet.getGravity(),
+      };
+
+      res.send(formattedPlanet);
+    } catch (error) {
+      return res.status(404).json({ message: error.message });
     }
-
-    const planet = await new Planet(planetId);
-    planet.init(planetData);
-    const formattedPlanet = {
-      name: planet.getName(),
-      gravity: planet.getGravity(),
-    };
-
-    res.send(formattedPlanet);
   });
 
   server.get("/hfswapi/getWeightOnPlanetRandom", async (req, res) => {
-    res.sendStatus(501);
+    try {
+      const randomPersonId = Math.floor(Math.random() * 88) + 1;
+      const randomPlanetId = Math.floor(Math.random() * 61) + 1;
+
+      const randomPerson = await peopleFactory(randomPersonId, null, true);
+      const randomPlanet = new Planet(randomPlanetId, true);
+      console.log({ randomPerson, randomPlanet });
+      await randomPlanet.init(true);
+      const weightOnPlanet =
+        getWeightOnPlanet(randomPerson.getMass(), randomPlanet.getGravity()) ??
+        null;
+      res.send({ weightOnPlanet });
+    } catch (error) {
+      return res.status(404).json({ message: error.message });
+    }
   });
 
   server.get("/hfswapi/getLogs", async (req, res) => {
