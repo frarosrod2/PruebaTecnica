@@ -58,13 +58,24 @@ const applySwapiEndpoints = (server, app) => {
 
   server.get("/hfswapi/getWeightOnPlanetRandom", async (req, res) => {
     try {
-      const randomPersonId = Math.floor(Math.random() * 88) + 1;
-      const randomPlanetId = Math.floor(Math.random() * 61) + 1;
+      const randomPersonId = Math.floor(Math.random() * 88) + 1; //Last personId in api is 88 (some people returns unkown mass)
+      const randomPlanetId = Math.floor(Math.random() * 61) + 1; //Last planetId in api is 61 (some planets returns unkown gravity)
+      const isUsingApi = true;
 
-      const randomPerson = await peopleFactory(randomPersonId, null, true);
-      const randomPlanet = new Planet(randomPlanetId, true);
-      console.log({ randomPerson, randomPlanet });
+      const randomPerson = await peopleFactory(
+        randomPersonId,
+        null, //or "wookiee"
+        isUsingApi
+      );
+      const randomPlanet = new Planet(randomPlanetId, isUsingApi);
       await randomPlanet.init(true);
+      console.log({ randomPerson });
+      if (randomPerson.homeworldId === randomPlanet.getId()) {
+        throw new Error(
+          "The person home planet is the same as the obtained planet"
+        );
+      }
+
       const weightOnPlanet =
         getWeightOnPlanet(randomPerson.getMass(), randomPlanet.getGravity()) ??
         null;
@@ -75,8 +86,15 @@ const applySwapiEndpoints = (server, app) => {
   });
 
   server.get("/hfswapi/getLogs", async (req, res) => {
-    const data = await app.db.logging.findAll();
-    res.send(data);
+    try {
+      const data = await app.db.logging.findAll({
+        raw: true,
+      });
+      console.log({ data });
+      res.send(data);
+    } catch (error) {
+      return res.status(500).json({ message: error.message });
+    }
   });
 };
 

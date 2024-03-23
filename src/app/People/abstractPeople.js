@@ -9,13 +9,14 @@ class AbstractPeople {
   }
 
   async init(isUsingApi) {
-    console.log(this.id, isUsingApi);
     const person = await getPersonById(this.id, isUsingApi);
     this.name = person.name ?? "";
     this.mass = person.mass ?? null;
     this.height = person.height ?? null;
     this.homeworldName = person.homeworld_name ?? "";
-    this.homeworldId = person.homeworld_id ?? "";
+    this.homeworldId = isUsingApi
+      ? +person.homeworld?.split("api/planets/")?.[1]?.replaceAll("/", "") ?? ""
+      : +person.homeworld_id?.split("planets/")?.[1]?.replaceAll("/", "") ?? "";
   }
 
   getId() {
