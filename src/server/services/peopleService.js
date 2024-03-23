@@ -4,7 +4,10 @@ const { genericRequest } = require("../../app/swapiFunctions/index");
 const getPersonById = async (personId, isUsingApi) => {
   const personData = await findPersonById(personId, isUsingApi);
   if (!personData) {
-    throw new Error("Person not found");
+    if (isUsingApi) throw new Error("Person not found");
+    else {
+      return await findPersonById(personId, true);
+    }
   }
   return personData;
 };

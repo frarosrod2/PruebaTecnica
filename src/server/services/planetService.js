@@ -4,7 +4,10 @@ const { genericRequest } = require("../../app/swapiFunctions/index");
 const getPlanetById = async (planetId, isUsingApi) => {
   const planetData = await findPlanetById(planetId, isUsingApi);
   if (!planetData) {
-    throw new Error("Planet not found");
+    if (isUsingApi) throw new Error("Planet not found");
+    else {
+      return await findPlanetById(planetId, true);
+    }
   }
 
   return planetData;

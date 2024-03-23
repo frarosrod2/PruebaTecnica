@@ -62,14 +62,10 @@ const applySwapiEndpoints = (server, app) => {
       const randomPlanetId = Math.floor(Math.random() * 61) + 1; //Last planetId in api is 61 (some planets returns unkown gravity)
       const isUsingApi = true;
 
-      const randomPerson = await peopleFactory(
-        randomPersonId,
-        null, //or "wookiee"
-        isUsingApi
-      );
+      const randomPerson = await peopleFactory(randomPersonId);
       const randomPlanet = new Planet(randomPlanetId, isUsingApi);
       await randomPlanet.init(true);
-      console.log({ randomPerson });
+
       if (randomPerson.homeworldId === randomPlanet.getId()) {
         throw new Error(
           "The person home planet is the same as the obtained planet"
@@ -90,7 +86,6 @@ const applySwapiEndpoints = (server, app) => {
       const data = await app.db.logging.findAll({
         raw: true,
       });
-      console.log({ data });
       res.send(data);
     } catch (error) {
       return res.status(500).json({ message: error.message });
