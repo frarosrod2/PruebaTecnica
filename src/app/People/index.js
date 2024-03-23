@@ -1,4 +1,4 @@
-const { CommonPeople } = require("./commonPeople");
+const { CommonPeople } = require("./CommonPeople");
 const { WookieePeople } = require("./wookieePeople");
 
 const peopleFactory = async (id, lang, isUsingApi = false) => {

@@ -58,8 +58,8 @@ const applySwapiEndpoints = (server, app) => {
 
   server.get("/hfswapi/getWeightOnPlanetRandom", async (req, res) => {
     try {
-      const randomPersonId = Math.floor(Math.random() * 88) + 1; //Last personId in api is 88 (some people returns unkown mass)
-      const randomPlanetId = Math.floor(Math.random() * 61) + 1; //Last planetId in api is 61 (some planets returns unkown gravity)
+      const randomPersonId = Math.floor(Math.random() * 88) + 1; //Last personId in api is 88 (some people return unkown mass)
+      const randomPlanetId = Math.floor(Math.random() * 61) + 1; //Last planetId in api is 61 (some planets return unkown gravity)
       const isUsingApi = true;
 
       const randomPerson = await peopleFactory(randomPersonId);
